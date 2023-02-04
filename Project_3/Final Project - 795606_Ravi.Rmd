@@ -1,0 +1,162 @@
+---
+title: "DAB501 Final Project"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+## Student Information
+
+- Name: Ravi
+- ID: 0795606
+
+
+## Instructions 
+
+Follow the instructions on the handout provided. 
+
+
+## Packages and Data
+
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+```{r}
+# Replace the _____ with the correct file name
+df <- read_csv(here('starbucks.csv'))
+```
+
+
+
+## MODELING: First pair of variables
+
+### Question 1
+Ans: 'fat' is the explanatory variable. 
+
+### Question 2
+Ans: 'calories' is the response variable.
+
+### Question 3
+
+```{r}
+model1 <- lm(calories ~ fat, data = df)
+summary (model1)
+
+```
+
+### Question 4
+Ans: The equation for the model is " Predicted Calories = 183.734 + 11.267*(fat) "
+
+\(\hat{\rm predicted\;calories} = 183.734 + 11.267*{\rm fat}\) 
+
+### Question 5
+Ans: The intercept tells us that food with 0 fat content, is expected to have on average 183.737 calories.
+
+### Question 6
+Ans: As their is one data point where fat is 0 and quite few data points near to 0, the intercept is a meaningful value. Also, the predicted value is close to bulk of the data. 
+
+### Question 7
+Ans: For each additional gram of fat in food, we would expect the calories in the food to be increased on average by 11.267 calories.
+
+
+## MODELING: Second pair of variables
+
+### Question 1
+Ans: 'carb' is the explanatory variable. 
+
+### Question 2
+Ans: 'calories' is the response variable.
+
+### Question 3
+
+```{r}
+model2 <- lm(calories ~ carb, data = df)
+summary (model2)
+
+```
+
+### Question 4
+Ans: The equation for the model is " Predicted Calories = 146.0204 + 4.2971*(carb) "
+
+\(\hat{\rm predicted\;calories} = 146.0204 + 4.2971*{\rm carb}\) 
+
+### Question 5
+Ans: The intercept tells us that food with 0 carb content, is expected to have on average 146.0204 calories.
+
+### Question 6
+Ans: Intercept has a meaningfull value as their are few data points where value of carbs is very low e.g. 20 and while, the predicted value is also close to bulk of the data. 
+
+### Question 7
+Ans: For each additional gram of carb in food, we would expect the calories in the food to be increased on average by 146.0204 calories.
+
+
+## MODEL ASSESSMENT
+
+### Question 1
+Ans: We can use Multiple R-squared metric for choosing model.
+
+### Question 2
+Ans: The Multiple R-squared gives us the correlation coefficient between variables and predicts the variance in the response variable caused by explanatory variable in a regression model.
+
+Based on it's value, we can determine how useful the explanatory variable is in predicting. It's value ranges between 0 to 1 and value closer to 1 is considered showing high level of correlation.
+
+### Question 3
+Ans: According to the metric, 'model1' consisting calories and fat is the best one. The Multiple R-squared value of 'model1' is 0.5756 which is higher than value of 'model2' which is 0.4556, hence higher the value, better the model.
+
+
+## MODEL DIAGNOSTICS
+
+### Question 1
+
+```{r}
+ df_mod <- df %>% mutate (pred_calories = 183.734 + 11.267*fat, residuals = calories - pred_calories)
+
+df_mod %>%  select (calories, pred_calories, fat, residuals)
+```
+
+### Question 2
+
+```{r}
+ggplot(df_mod, aes(x=fat, y= residuals))+
+  geom_point()+
+  geom_hline(yintercept = 0)
+```
+
+With multiple positive and negative data points, there is no obvious pattern between 'fat' and 'residuals'.Hence, the linearity condition is met.
+
+
+### Question 3
+
+```{r}
+ggplot(df_mod, aes(x = residuals))+
+
+ geom_histogram(fill= 'green', color= 'black', binwidth =50)
+```
+
+The histogram plot seems to be symmetrical and hence is unimodal.
+The shape of residuals depend upon the normal random variations. Hence, residuals appear to be nearly normal and the condition is met.
+
+### Question 4
+
+```{r}
+ggplot(df_mod, aes(x=fat, y=residuals))+
+ geom_point()+
+ geom_hline(yintercept=0)+
+ geom_hline(yintercept=100, colour='red')+
+ geom_hline(yintercept=-100, colour='red')
+```
+
+The constant variablitity condition seems to be met as there is no clear pattern that changes the variablity with increase in fat. Also, most of the residuals appear to be within the 2 red horizontal lines at 100 and -100, while not looking like getting closer or farther from 0 with increase in fat. 
+
+## CONCLUSION
+
+### Question 1
+Ans: The model is good for linear regression as it seems to meet all the conditions of diagnostic tests such as linearity, nearly normal residuals and constant variablity. This means that the model can fairly predict the value of response variable (calories) with less variation, for a given value of explanatory variable (fat).
+
+
+
+
+
