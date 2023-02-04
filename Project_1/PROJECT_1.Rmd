@@ -1,0 +1,248 @@
+---
+title: "Credit Card Balance Data"
+output: html_notebook
+---
+
+#### Project By: Ravi
+#### Student ID: 795606
+#### Course and Section: DAB B018 - 002
+
+# Statement
+The project represents my own work and I have
+adhered to St. Clair College’s Academic Integrity policies in completing this project.
+
+# Versions Used
+
+R: R version 4.1.2 (2021-11-01)
+
+RStudio: RStudio 2021.09.2+382 "Ghost Orchid" Release (fc9e217980ee9320126e33cdf334d4f4e105dc4f, 2022-01-04) for Windows
+Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+
+# List of R Packages with their Versions
+
+tidyverse version: 1.3.1
+
+ggplot2 version: 3.3.5
+
+gridExtra version: 2.3
+
+# About Dataset 
+
+### Source
+
+It is a simulated data set which was used in the book 'An Introduction to Statistical Learning with Applications in R', https://www.statlearning.com  written by James, G., Witten, D., Hastie, T., and Tibshirani. 
+
+Data set 'Credit' Supplied By: Albert Kim
+
+### Link to the Data Set
+
+https://drive.google.com/file/d/1TZUERS5TSFtzJXr5bohdmJ4VhCnYxuwj/view?usp=sharing
+
+### Description
+
+Credit Card Balance Data is a simulated dataset which contains data of hundreds of customers including their personal information such as income (in $1000s)age, education (in years), gender, marital status, ethnicity and bank details such as credit card limit, credit score, number of cards and average credit card balance left.
+
+It has 400 observations on the following 12 variables:
+
+ID: Identification
+
+Income: Income in $1,000's
+
+Limit: Credit Card limit in $. 
+
+Rating: Credit Score which reflects the creditworthiness of the customer.
+
+Cards: Number of credit cards
+
+Age: Age in years.
+
+Education: Number of years of education.
+
+Gender: A factor with levels Male and Female.
+
+Student: A factor with levels No and Yes indicating whether the individual was a student.
+
+Married: A factor with levels No and Yes indicating whether the individual was married.
+
+Ethnicity: A factor with levels African American, Asian, and Caucasian indicating the individual's ethnicity
+
+Balance: Average credit card balance in $.
+
+
+## Loading R Packages and DataSet
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(gridExtra)
+```
+
+## Loading DataSet
+
+```{r}
+library(readr)
+Credit <- read_csv("D:/St Clair/LAB 501/Practice/Credit.csv")
+View(Credit)
+```
+
+```{r}
+glimpse(Credit) #detail of variables 
+```
+```{r}
+summary(Credit) #summary of the dataset
+```
+
+## 1. Two plots displaying the distribution of a single continuous variable
+
+### 1.1 Density Plot displaying Average Credit Card Balance in dollars of Customers
+
+```{r}
+ggplot(Credit, aes(Balance))+ #initializing the ggplot object and specifying the data as Credit and providing variable Balance
+  geom_density(stat="bin",binwidth= 50, fill= "greenyellow",colour= "red" )+ #adding layer of density plot along with outline color and fill color. Also specifying bin and binwidths 
+  labs(x="Average Credit Card Balance (in $)", y="Number of Customers", title = "Average Credit Card Balance of Customers", caption = "Source: www.statlearning.com ")+ #specifying suitable texts for title,x nd y axis and caption
+  coord_cartesian(ylim=c(0,100))+ #setting coordinates on y-axis
+  theme_bw()+ # theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+  
+```
+As per the data from density plot, more than 90 customers are left with $0 average balance in their credit cards. This indicates that most of the customers have exhausted their credit card limit.
+
+### 1.2 Histogram Plot showing Number of Customers and their Income
+
+```{r}
+ggplot(Credit, aes(Income))+ #initializing the ggplot object and specifying the data as Credit and providing variable Income
+  geom_histogram(binwidth = 5, fill= "cyan",colour= "purple" )+ #adding layer of histogram plot along with outline color and fill color
+  labs(x="Customer's Income (in $1000's)", y="Number of Customers", title = "Number of Customers and Customer's Income", caption = "Source: www.statlearning.com ")+ #specifying suitable texts for title,x nd y axes and caption
+  coord_cartesian(xlim=c(0,200), ylim=c(0,50))+ #setting coordinates on x and y axis
+  theme_bw()+ # theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+```
+The Histogram plot shows that maximum number of customers earn income in the range of 13,000-35,000 dollars. The plot indicates that more than 45 customers earn $25,000 and approximately 40 customers earn around $15,000.
+
+## 2. Two plots displaying information about a single categorical variable
+
+### 2.1 Bar Plot displaying Customers and their Ethnicity
+
+
+```{r}
+ggplot(Credit, aes(Ethnicity, stat(count)))+ #initializing the ggplot object and specifying the data as Credit and providing variable Ethnicity and setting stat as total number of customers
+  geom_bar(fill="darkorchid4", colour="yellow")+ #adding layer of bar plot along with outline color and fill color
+  labs(x="Ethnicity", y="Number of Customers", title = "Customers And Their Ethnicity", caption = "Source: www.statlearning.com ")+ #specifying suitable texts for title,x nd y axis and caption
+  coord_flip()+ #flipping axes for better visualization plot
+  theme_bw()+ # theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+```
+This Bar plot shows the number of customers from different ethnicity. The data shows that there are approximately 200 Caucasian customers, which is almost equal to the total number of customers from other two ethnicity (i.e Asian and African American) combined .
+
+
+### 2.2 Bar Plot displaying proportion of Married vs Unmarried customers
+
+```{r}
+ggplot(Credit, aes(Married, stat(prop), group=1))+ #initializing the ggplot object and specifying the data as Credit and providing variable Married and setting group=1 so that proportions are shown w.r.t. each other
+  geom_bar(fill="khaki2", colour="red2")+ #adding layer of bar plot along with outline color and fill color
+  labs(x="Marital Status", y="Proportion", title = "Proportion of Married and Unmarried Customers", caption = "Source: www.statlearning.com ")+ #specifying suitable texts for title,x nd y axis and caption
+  theme_bw()+ #theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4"))+ #justifying and editing the element text of plot title 
+  theme(plot.background=element_rect(fill="grey80"), plot.margin = unit(c(2, 2, 1, 1), "cm")) #modifying plot background and margins for better visualization 
+
+
+```
+
+The Bar plot represents the proportion of married and unmarried customers. From the plot it is clear that more than 60% of the customers are married while the rest 40% customers are Unmarried.
+
+
+## 3. One plot displaying information about both a continuous variable and a categorical variable
+
+### Box Plot represnting Average Credit Card Balance of Different Ethnicities
+
+```{r}
+ggplot(Credit, aes(x= Ethnicity, y= Balance, fill= Ethnicity))+ #initializing the ggplot object and specifying the data as Credit and providing variables Ethnicity and Balance, also adding fill color according to Ethnicity resulting in unique color for each ethnicity 
+  geom_boxplot(colour="blue")+ #adding layer of box plot along with color 
+  labs(x="Ethnicity", y="Average Credit Card Balance (in $)", title = "Average Credit Card Balance of Different Ethnicities", caption = "Source: www.statlearning.com ")+ #specifying suitable texts for title,x nd y axis and caption
+  theme_bw()+ # theme of the graph
+  theme(legend.position= "none")+ # removing legend for improved visualization as it doesn't serve much purpose
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+```
+The Box Plot provides the details of Average Credit Card balance based on customer's ethnicity. Each Ethnicity is shown in unique color in the plot. We can see that customer of Caucasian ethnicity has the highest average balance, which is $2000. Also, African American customer's median is higher than others which falls around $500 while Asian customers have the lowest median.
+
+## 4. Two plots should display information that shows a relationship between two variables
+
+### 4.1 Scatter Plot of Credit Card vs Credit Card Limit
+
+```{r}
+ggplot(Credit,aes(x=Rating,y=Limit))+ #initializing the ggplot object and specifying the data as Credit and providing variables Rating to x and Limit to y
+  geom_point(colour="green")+ #adding layer of scatter plot along with color
+  geom_smooth(color="blue", method="lm", se= F)+ #adding another layer for representing trend in plot and providing type and color of the line
+  labs(x="Credit Score", y="Credit Card Limit (in $)", title = "Credit Score vs Credit Card Limit", caption = "Source: www.statlearning.com ")+ #specifying suitable texts for title,x nd y axis and caption
+  coord_cartesian(ylim=c(0,15000))+ #setting coordinates on y axis
+  theme_bw()+ #theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+```
+The Scatter Plot clearly shows that credit Score and Credit Card Limit are directly proportional to each other, i.e Credit Card Limit increases with increase in Credit Score. From plot, we can see that the highest Credit Card limit $13,913 is allocated to a customer having highest Credit score of 982.
+
+### 4.2 Scatter Plot showing Relationship between Customer's Income and Credit Score
+
+```{r}
+ggplot(Credit,aes(x=Income,y=Rating))+ #initializing the ggplot object and specifying the data as Credit and providing variables Income and Rating 
+  geom_point(color='orange')+ #adding layer of scatter plot along with color
+  geom_smooth(color="purple", method="loess")+ #adding another layer for representing trend in plot and providing type and color of the line
+  labs(x="Customer's Income (in $1000)", y="Credit Score", title = "Relationship between Customer's Income and Credit Score", caption = "Source: www.statlearning.com ")+ #specifying suitable texts for title,x nd y axis and caption
+  coord_cartesian(xlim=c(0,200))+ #setting coordinates on x axis
+  theme_bw()+ #theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+  
+```
+
+Here the Customer's Income is plotted against the Credit Score. The plot shows that the credit score gradually increases along with increase in customer's income. This means that customer having higher income will get better credit score. From the plot, we can also see that credit score from 0 to 500 is most common for customers having Income between $10,000 to $50,000.
+
+
+## 5. One plot should use faceting and display information about 4 variables
+
+### Scatter Plot displaying infomartion about Income vs Credit Score by Ethnicity and Marital Status
+
+```{r}
+ggplot(Credit,aes(x=Income,y=Rating))+ #initializing the ggplot object and specifying the data as Credit and providing variables Income to x and Rating to y
+  geom_point(color='turquoise')+ #adding layer of scatter plot along with color
+  geom_smooth(color="khaki4", method="loess", se = F)+ #adding another layer for representing trend in plot and providing type and color of the line
+  facet_grid(Ethnicity~Married )+ #using facet grid will allow me to add two more variables
+  coord_cartesian(xlim=c(0,200))+ #setting coordinates on x axis
+  labs(x="Customer's Income (in $1000)", y="Credit Score", title = "Income vs Credit Score by Ethnicity and Marital Status", caption = "Yes means Married 
+       No means Unmarried")+ #specifying suitable texts for title,x nd y axis and caption
+  theme_bw()+ # theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+```
+
+The above plot shows that married customers from each ethnicity has higher incomes and better credit score with respect to unmarried customers. 
+
+## Questions
+
+### 1. In what ways do you think data visualization is important to understanding a data set?
+Data Visualization makes it easier to explore and understand relationship between multiple variables.
+Data visualization also helps in finding trends or patterns in any variable based on given data, which can be helpful in predicting future course of action.
+Instead of going through the whole dataset manually,we can use visualization get the key values of any variable instantly.
+
+
+### 2. In what ways do you think data visualization is important to communicating important aspects of a data set?
+A good visualization is self explanatory and conveys all the important aspects of a dataset in easy to understand manner. We can focus on important aspects by highlighting them in the plots with color, lines showing trend, different shapes, etc. Visualized data can also be appealing which makes the data presentation interesting. 
+
+
+### 3. What role does your integrity as an analyst play when creating a data visualization for communicating results to others?
+As an analyst, it's my responsibility to provide a data visualization which conveys correct information without any data manipulation. The visualization should be simple and easy to understand. It should contain all the important aspects but shouldn't be crowded with information.
+
+
+### 4. How many variables do you think you can successfully represent in a visualization? What happens when you exceed this number?
+I can represent up-to 4 to 5 variables in a good visualization depending on the type of variables being used. It can be done by using faceting for 4 variables and using 5th variable as color.
+More than 5 variables are not preferable as it can make the visualization hard to understand and difficult to follow trends or patterns. The visualization looks clustered and untidy.
+
+
+## References
+
+http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+
+http://www.cookbook-r.com/Graphs/Scatterplots_(ggplot2)/
+
+Both of these resources were very useful in the project. From selecting suitable plot for particular variables to how to modify the background, title, captions and axes of the plot. Going through multiple examples made it convenient to understand. 
+
+
+
+
