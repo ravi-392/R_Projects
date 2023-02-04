@@ -1,0 +1,263 @@
+---
+title: "Univariate Analysis of Credit Card Balance Data"
+output: html_notebook
+---
+
+#### Project By: Ravi
+#### Student ID: 795606
+#### Course and Section: DAB B018 - 002
+
+# Statement
+I, Ravi, hereby state that I have not communicated with or gained information in any way from any person or resource that would violate the College’s academic integrity policies, and that all work presented is my own. In addition, I also agree not to share my work in any way, before or after submission, that would violate the College’s academic integrity policies.
+
+# About Dataset 
+
+### Source
+
+It is a simulated data set which was used in the book 'An Introduction to Statistical Learning with Applications in R', https://www.statlearning.com  written by James, G., Witten, D., Hastie, T., and Tibshirani. 
+
+Data set 'Credit' Supplied By: Albert Kim
+
+### Description
+
+Credit Card Balance Data is a simulated dataset which contains data of hundreds of customers including their personal information such as income (in $1000s), age, education (in years), gender, marital status, ethnicity and bank details such as credit card limit, credit score, number of cards and average credit card balance left.
+
+It has 400 observations on the following 12 variables:
+
+ID: Identification
+
+Income: Income in $1,000's
+
+Limit: Credit Card limit in $. 
+
+Rating: Credit Score which reflects the creditworthiness of the customer.
+
+Cards: Number of credit cards
+
+Age: Age in years.
+
+Education: Number of years of education.
+
+Gender: A factor with levels Male and Female.
+
+Student: A factor with levels No and Yes indicating whether the individual was a student.
+
+Married: A factor with levels No and Yes indicating whether the individual was married.
+
+Ethnicity: A factor with levels African American, Asian, and Caucasian indicating the individual's ethnicity
+
+Balance: Average credit card balance in $.
+
+
+## Loading R Packages 
+
+```{r}
+library(tidyverse)
+library(here)
+library(gridExtra)
+```
+
+## Loading DataSet
+
+```{r}
+library(readr)
+Credit <- read_csv("D:/St Clair/LAB 501/PROJECT 1/Credit.csv")
+
+```
+
+```{r}
+glimpse(Credit) #detail of variables 
+```
+```{r}
+summary(Credit) #summary of the dataset
+```
+
+## Data Cleaning
+
+```{r}
+Credit_clean <- Credit %>% 
+  select(-"...1")
+
+Credit_clean
+```
+
+
+
+
+## Univariate Analysis of Income
+
+
+### 1. Create an appropriate plot to visualize the distribution of this variable.
+Below is a histogram plot showing number of customers according to their Income.
+
+```{r}
+ggplot(Credit_clean, aes(x=Income))+ #initializing the ggplot object and specifying the data as Credit and providing variable Income
+  geom_histogram(fill= "turquoise", colour= "black", binwidth = 8)+ #adding layer of histogram plot along with outline color and fill color
+  labs(x="Customer's Income (in $1,000's)", y="Number of Customers", title = "Number of Customers and Customer's Income")+
+  coord_cartesian(xlim=c(0,200), ylim=c(0,80))+ #setting coordinates on x and y axis
+  theme_bw()+ # theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+```
+
+
+
+
+### 2. Consider any outliers present in the data. If present, specify the criteria used to identify them and provide a logical explanation for how you handled them.
+According to the histogram plot, it is evident that outliers fall around 150.After applying the filter on Income to be above than $150,000, we can observe that few people have earned around $180,000 which is more than usual income of people, but is not impossible.
+
+```{r}
+Credit_clean %>% filter(Income>150)
+```
+
+The maximum Income in this data is aprroximately $186,634.This could be because of a high paying job, successful business, multiple jobs or investments, etc.In real world, Income can be even higher than this but for fewer and fewer people, which is also a sign of disparity in wealth across population.
+
+Also, the low income data points could be a result of people not getting consistent work or job, loss in business or investments, etc and hence can be realistic data points.
+
+These outliers are in consistence with the real world and don't seem to be an error. Hence, keeping these outliers in the data.
+
+
+
+
+### 3. Describe the shape and skewness of the distribution.
+The histogram plot shows that the shape of distribution is Unimodal as it is having a single prominent peak.
+Also, the plot is right skewed or positive skewed, as it can be observed that peak is in left of center of the plot and afterwards a sharp decline which extends like a tail till right end of plot.
+
+
+
+
+### 4. Based on your answer to the previous question, decide if it is appropriate to apply a transformation to your data. If no, explain why not. If yes, name the transformation applied and visualize the transformed distribution.
+As the distribution is right skewed which is also known as positive skeweness,it will be appropriate to transform the data for easier modeling. I will be applying Log Transformation as it is better suited for positively skewed than square root transformation.
+
+Below is the transformed visualisation of Income data:
+
+```{r}
+ggplot(Credit_clean, aes(x=Income))+  #initializing the ggplot object and specifying the data as Credit and providing variable Income
+  geom_histogram(fill= "skyblue", colour= "black")+  #adding layer of scatter plot along with color
+  scale_x_log10()+ #adding log transformation on x-axis
+  labs(x="Log10 of Customer's Income", y="Number of Customers", title = "Number of Customers and Customer's Income")+ #specifying suitable texts for title,x nd y axis
+  theme_bw() #theme of the graph
+  
+```
+
+From the above plot, we can observe that the distribution has become more uniform than before with a lot less skewness.
+
+
+
+
+### 5. Choose and calculate an appropriate measure of central tendency.
+For getting an appropriate measure of central tendency, I will be calculating median for the variable:
+
+```{r}
+Median_Income = median(Credit_clean$Income)
+Median_Income
+
+```
+The median of Income is 33.1155.
+
+
+
+
+### 6. Explain why you chose this as your measure of central tendency. Provide supporting evidence for your choice.
+As the the distribution is right skewed, it is more preferrable to use median for measuring central tendency rather than mean for better statistics.
+
+For reference, I have plotted a histogram plot below which depicts the mean and median of the Income. The blue vertical line is the median while red vertical line is mean. From the graph, it is evident that median better reflects the central tendency or center of the data.
+
+
+```{r}
+ggplot(Credit_clean, aes(x=Income))+ #initializing the ggplot object and specifying the data as Credit and providing variable Income
+  geom_histogram(fill= "turquoise", colour= "black", binwidth = 8)+ #adding layer of histogram plot along with outline color and fill color
+  geom_vline(xintercept= mean(Credit_clean$Income), colour= 'red', size=1)+ #adding vertical line on cordinates of mean on x-axis
+  geom_vline(xintercept= median(Credit_clean$Income), colour= 'blue', size=1)+ #adding vertical line on cordinates of median on x-axis
+  labs(x="Customer's Income (in $1,000's)", y="Number of Customers", title = "Number of Customers and Customer's Income")+
+  coord_cartesian(xlim=c(0,200), ylim=c(0,80))+ #setting coordinates on x and y axis
+  theme_bw()+ # theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title
+```
+
+
+
+
+### 7. Choose and calculate a measure of spread that is appropriate for your chosen measure of central tendency. Explain why you chose this as your measure of spread.
+Along with calculating median for central tendancy, I will be calculating IQR for the measurement of spread as these are more robust to skewness and resistant to outliers. 
+As my data is right skewed it is appropriate to calculate IQR than standard deviation.Below is the code chunk for IQR:
+
+```{r}
+IQR_Income= IQR(Credit_clean$Income)
+IQR_Income
+```
+The IQR of Income is 36.4635.
+
+
+
+## Univariate Analysis of Ethnicity
+
+
+### 1. Create an appropriate plot to visualize the distribution of counts for this variable.
+
+Below is a Bar plot with flipped axes(for better visualization) of count of customers according to their ethnicity.
+
+
+```{r}
+ggplot(Credit_clean, aes(Ethnicity, stat(count)))+ #initializing the ggplot object and specifying the data as Credit and providing variable Ethnicity and setting stat as total number of customers
+  geom_bar(fill="greenyellow", colour="purple")+ #adding layer of bar plot along with outline color and fill color
+  labs(x="Ethnicity", y="Number of Customers", title = "Customers And Their Ethnicity")+ #specifying suitable texts for title,x nd y axis
+  coord_flip()+ #flipping axes for better visualization plot
+  theme_bw()+ # theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title 
+```
+
+
+
+### 2. Create an appropriate plot to visualize the distribution of proportions for this variable. 
+
+Below is a Bar plot to show the proportion of customers according to their ethnicity: 
+
+```{r}
+ggplot(Credit_clean, aes(x=Ethnicity, stat(prop), group=1))+ #initializing the ggplot object and specifying the data as Credit and providing variable Ethnicity and setting stat as total number of customers
+  geom_bar(fill="khaki2", colour="purple")+ #adding layer of bar plot along with outline color and fill color
+  labs(x="Ethnicity", y="Proportion", title = "Proportion of Customers per Ethnicity")+ #specifying suitable texts for title,x nd y axis
+  theme_bw()+ # theme of the graph
+  theme(plot.title = element_text(hjust = 0.5, face = "bold",color ="red4")) #justifying and editing the element text of plot title
+```
+
+
+### 3. Discuss any unusual observations for this variable?
+From above plots we can observe that number of Caucasian customers is almost double to that of African American and Asian customers. 
+
+As per the U.S. Census 2020, African American population is about 12% while Asian population is around 6% of total population.
+Though here we see the proportion of African American and Asian is almost similar, it is nothing out of sorts.
+Similarly, the percentage of White people is approximately 76% which includes Caucasian, hence higher number of caucasian customers is justifiable.  
+
+Below is the table of Ethnic customers providing count and proportion of each group:
+
+```{r}
+Credit_clean %>% 
+  group_by(Ethnicity) %>% 
+  summarise(Number_of_Customers=n()) %>%
+              mutate(Proportion=Number_of_Customers/sum(Number_of_Customers)) %>% 
+  arrange(-Number_of_Customers)
+```
+
+
+### 4. Discuss if there are too few/too many unique values?
+The Ethnicity is categorized in three groups in this dataset as follow:
+1. Caucasian
+2. Asian
+3. African American
+
+For purpose of visualisation, it is good to have more unique values as to create a visually appealing plot.
+But the plot we get from above mentioned unique values is quite helpful as it is easy to read and understand the data corresponding to each axis.
+
+
+
+## References
+
+https://www.youtube.com/watch?v=0L3Obq4FSVQ&ab_channel=Udacity
+
+http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+
+http://www.cookbook-r.com/Graphs/Scatterplots_(ggplot2)/
+
+
+
+
